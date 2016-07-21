@@ -6,24 +6,36 @@
         xmlns:local="clr-namespace:WpfApplication1"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-    
-    <StackPanel HorizontalAlignment="Center" Margin="0,0,40,0">
-        <Label Content="Delayed command with no delay" HorizontalAlignment="Center"/>
-        <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=ClickCommand}"/>
-        <Label Content="Button was clicked" HorizontalAlignment="Center"/>
-        <Label Content="{Binding Path=TimesClicked}" HorizontalAlignment="Center"/>
-        <Label Content="times" HorizontalAlignment="Center"></Label>
-    </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" Margin="40,0,0,0">
-            <Label Content="Delayed command with 200ms delay" HorizontalAlignment="Center"/>
-            <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=DelayedClickCommand}"/>
+    <StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+    
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,40,0">
+                <Label Content="Delayed command with no delay" HorizontalAlignment="Center"/>
+                <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=ClickCommand}"/>
+                <Label Content="Button was clicked" HorizontalAlignment="Center"/>
+                <Label Content="{Binding Path=TimesClicked}" HorizontalAlignment="Center"/>
+                <Label Content="times" HorizontalAlignment="Center"></Label>
+            </StackPanel>
+
+        
+            <StackPanel HorizontalAlignment="Center" Margin="40,0,0,0">
+                <Label Content="Delayed command with 200ms delay" HorizontalAlignment="Center"/>
+                <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=DelayedClickCommand}" CommandParameter="{Binding Path=TimesIncrease}"/>
+                <Label Content="Button was clicked" HorizontalAlignment="Center"/>
+                <Label Content="{Binding Path=DelayedTimesClicked}" HorizontalAlignment="Center"/>
+                <Label Content="times" HorizontalAlignment="Center"></Label>
+            </StackPanel>
+
+        </StackPanel>
+        
+        <StackPanel HorizontalAlignment="Center">
+            <Label Content="Rate Limit Command" HorizontalAlignment="Center"/>
+            <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=RateLimitClickCommand}"/>
             <Label Content="Button was clicked" HorizontalAlignment="Center"/>
-            <Label Content="{Binding Path=DelayedTimesClicked}" HorizontalAlignment="Center"/>
+            <Label Content="{Binding Path=RateLimitTimesClicked}" HorizontalAlignment="Center"/>
             <Label Content="times" HorizontalAlignment="Center"></Label>
         </StackPanel>
-
     </StackPanel>
 </Window>

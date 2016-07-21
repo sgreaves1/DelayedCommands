@@ -1,15 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfApplication1.Command;
 
 namespace WpfApplication1.ViewModel
 {
-    public class ViewModel : INotifyPropertyChanged
+    public class ViewModel : BaseViewModel
     {
         private int _timesClicked;
         private int _delayedTimesClicked;
+        private int _rateLimitTimesClicked;
 
         public ViewModel()
         {
@@ -18,21 +17,31 @@ namespace WpfApplication1.ViewModel
 
         public ICommand ClickCommand { get; set; }
         public ICommand DelayedClickCommand { get; set; }
+        public ICommand RateLimitClickCommand { get; set; }
 
         private void InitCommand()
         {
             ClickCommand = new DelayedCommand(ExecuteClickCommand);
-            DelayedClickCommand = new DelayedCommand(ExecuteDelayedClickCommand, TimeSpan.FromMilliseconds(200));
+            DelayedClickCommand = new DelayedCommandTakingFunction(ExecuteDelayedClickCommand,
+                TimeSpan.FromMilliseconds(200),
+                (parameter, newParameter) => (int) parameter + (int) newParameter);
+
+            RateLimitClickCommand = new RateLimitCommand(ExecuteRateLimitClickCommand, TimeSpan.FromSeconds(1));
         }
 
-        private void ExecuteDelayedClickCommand()
+        private void ExecuteRateLimitClickCommand()
         {
-            DelayedTimesClicked = ((DelayedCommand)DelayedClickCommand).TimesClicked;
+            RateLimitTimesClicked = ((RateLimitCommand) RateLimitClickCommand).TimesClicked;
+        }
+
+        private void ExecuteDelayedClickCommand(object sender)
+        {
+            DelayedTimesClicked = (int) sender;
         }
 
         private void ExecuteClickCommand()
         {
-            TimesClicked = ((DelayedCommand)ClickCommand).TimesClicked;
+            TimesClicked = ((DelayedCommand) ClickCommand).TimesClicked;
         }
 
         public int TimesClicked
@@ -45,6 +54,8 @@ namespace WpfApplication1.ViewModel
             }
         }
 
+        public int TimesIncrease => 1;
+
         public int DelayedTimesClicked
         {
             get { return _delayedTimesClicked; }
@@ -55,11 +66,14 @@ namespace WpfApplication1.ViewModel
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public int RateLimitTimesClicked
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _rateLimitTimesClicked; }
+            set
+            {
+                _rateLimitTimesClicked = value;
+                OnPropertyChanged();
+            }
         }
     }
 }
