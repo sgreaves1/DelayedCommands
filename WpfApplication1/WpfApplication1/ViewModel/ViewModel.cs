@@ -26,12 +26,13 @@ namespace WpfApplication1.ViewModel
                 TimeSpan.FromMilliseconds(200),
                 (parameter, newParameter) => (int) parameter + (int) newParameter);
 
-            RateLimitClickCommand = new RateLimitCommand(ExecuteRateLimitClickCommand, TimeSpan.FromSeconds(1));
+            RateLimitClickCommand = new RateLimitCommandTakingFunction(ExecuteRateLimitClickCommand, TimeSpan.FromSeconds(1), 
+                (parameter, newParameter) => (int)parameter + (int)newParameter);
         }
 
-        private void ExecuteRateLimitClickCommand()
+        private void ExecuteRateLimitClickCommand(object sender)
         {
-            RateLimitTimesClicked = ((RateLimitCommand) RateLimitClickCommand).TimesClicked;
+            RateLimitTimesClicked = (int)sender;
         }
 
         private void ExecuteDelayedClickCommand(object sender)

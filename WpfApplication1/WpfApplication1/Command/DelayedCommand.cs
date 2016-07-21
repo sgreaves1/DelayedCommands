@@ -32,6 +32,7 @@ namespace WpfApplication1.Command
             _canExecuteEvaluator = canExecuteEvaluator;
             
             _dispatcherTimer = new DispatcherTimer(delayTime, DispatcherPriority.Normal, Callback, Application.Current.Dispatcher);
+            _dispatcherTimer.IsEnabled = false;
         }
 
         /// <summary>

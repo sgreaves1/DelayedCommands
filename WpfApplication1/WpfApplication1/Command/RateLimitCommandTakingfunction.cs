@@ -5,14 +5,15 @@ using System.Windows.Threading;
 
 namespace WpfApplication1.Command
 {
-    public class RateLimitCommand : ICommand
+    public class RateLimitCommandTakingFunction : ICommand
     {
-        private readonly Action _methodToExecute;
+        private readonly Action<object> _methodToExecute;
         private readonly Func<bool> _canExecuteEvaluator;
         private readonly DispatcherTimer _dispatcherTimer;
 
-        public int TimesClicked;
-
+        private readonly ParameterAggregate _parameterAggregate;
+        public delegate object ParameterAggregate(object currentParameter, object newParameter);
+        
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
@@ -26,11 +27,12 @@ namespace WpfApplication1.Command
         /// <param name="methodToExecute">Method to run when command executes</param>
         /// <param name="canExecuteEvaluator">Method used to determine if the command can execute</param>
         /// <param name="delayTime">The cool down period required between click execution</param>
-        public RateLimitCommand(Action methodToExecute, Func<bool> canExecuteEvaluator, TimeSpan delayTime)
+        public RateLimitCommandTakingFunction(Action<object> methodToExecute, Func<bool> canExecuteEvaluator, TimeSpan delayTime, ParameterAggregate parameterAggregate)
         {
             _methodToExecute = methodToExecute;
             _canExecuteEvaluator = canExecuteEvaluator;
-            
+            _parameterAggregate = parameterAggregate;
+
             _dispatcherTimer = new DispatcherTimer(delayTime, DispatcherPriority.Normal, Callback, Application.Current.Dispatcher);
             _dispatcherTimer.IsEnabled = false;
         }
@@ -41,8 +43,8 @@ namespace WpfApplication1.Command
         /// </summary>
         /// <param name="methodToExecute">Method to run when command executes</param>
         /// <param name="delayTime">The cool down period required between click execution</param>
-        public RateLimitCommand(Action methodToExecute, TimeSpan delayTime)
-            : this(methodToExecute, null, delayTime)
+        public RateLimitCommandTakingFunction(Action<object> methodToExecute, TimeSpan delayTime, ParameterAggregate parameterAggregate)
+            : this(methodToExecute, null, delayTime, parameterAggregate)
         {
         }
 
@@ -50,8 +52,8 @@ namespace WpfApplication1.Command
         /// A command when only a <see cref="Execute"/> method is needed
         /// </summary>
         /// <param name="methodToExecute">Method to run when command executes</param>
-        public RateLimitCommand(Action methodToExecute)
-            : this(methodToExecute, null, TimeSpan.Zero)
+        public RateLimitCommandTakingFunction(Action<object> methodToExecute)
+            : this(methodToExecute, null, TimeSpan.Zero, null)
         {
         }
 
@@ -60,8 +62,8 @@ namespace WpfApplication1.Command
         /// </summary>
         /// <param name="methodToExecute">Method to run when command executes</param>
         /// <param name="canExecuteEvaluator">Method used to determine if the command can execute</param>
-        public RateLimitCommand(Action methodToExecute, Func<bool> canExecuteEvaluator)
-            : this(methodToExecute, canExecuteEvaluator, TimeSpan.Zero)
+        public RateLimitCommandTakingFunction(Action<object> methodToExecute, Func<bool> canExecuteEvaluator)
+            : this(methodToExecute, canExecuteEvaluator, TimeSpan.Zero, null)
         {
         }
         
@@ -77,13 +79,15 @@ namespace WpfApplication1.Command
 
         private DateTimeOffset _lastExecution = default(DateTimeOffset);
         public TimeSpan Limit { get; set; } = TimeSpan.FromSeconds(1);
+        
+        private object _currentParameter;
 
         public void Execute(object parameter)
         {
-            if (!_dispatcherTimer.IsEnabled)
-                TimesClicked = 0;
+            if (_currentParameter != null && _parameterAggregate != null)
+                parameter = _parameterAggregate(_currentParameter, parameter);
 
-            TimesClicked++;
+            _currentParameter = parameter;
 
             var delta = Limit - (DateTimeOffset.Now - _lastExecution);
             if (delta < default(TimeSpan))
@@ -101,7 +105,9 @@ namespace WpfApplication1.Command
         {
             _lastExecution = DateTimeOffset.Now;
             _dispatcherTimer.Stop();
-            _methodToExecute.Invoke();
+            _methodToExecute.Invoke(_currentParameter);
+
+            _currentParameter = null;
         }
     }
 }

@@ -32,7 +32,7 @@
         
         <StackPanel HorizontalAlignment="Center">
             <Label Content="Rate Limit Command" HorizontalAlignment="Center"/>
-            <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=RateLimitClickCommand}"/>
+            <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=RateLimitClickCommand}" CommandParameter="{Binding Path=TimesIncrease}"/>
             <Label Content="Button was clicked" HorizontalAlignment="Center"/>
             <Label Content="{Binding Path=RateLimitTimesClicked}" HorizontalAlignment="Center"/>
             <Label Content="times" HorizontalAlignment="Center"></Label>

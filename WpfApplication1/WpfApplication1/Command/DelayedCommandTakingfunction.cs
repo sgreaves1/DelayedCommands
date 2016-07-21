@@ -14,8 +14,6 @@ namespace WpfApplication1.Command
         private readonly ParameterAggregate _parameterAggregate;
         public delegate object ParameterAggregate(object currentParameter, object newParameter);
         
-        public int TimesClicked;
-
         public event EventHandler CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
@@ -83,9 +81,6 @@ namespace WpfApplication1.Command
 
         public void Execute(object parameter)
         {
-            if (!_dispatcherTimer.IsEnabled)
-                TimesClicked = 0;
-
             if (_currentParameter != null && _parameterAggregate != null)
                 parameter = _parameterAggregate(_currentParameter, parameter);
 
