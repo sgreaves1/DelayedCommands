@@ -22,27 +22,28 @@ namespace WpfApplication1.ViewModel
         private void InitCommand()
         {
             ClickCommand = new DelayedCommand(ExecuteClickCommand);
-            DelayedClickCommand = new DelayedCommandTakingFunction(ExecuteDelayedClickCommand,
-                TimeSpan.FromMilliseconds(200),
-                (parameter, newParameter) => (int) parameter + (int) newParameter);
+            DelayedClickCommand = new DelayedCommandTakingFunction(ExecuteDelayedClickCommand, TimeSpan.FromMilliseconds(200), OnClicked);
+            RateLimitClickCommand = new RateLimitCommandTakingFunction(ExecuteRateLimitClickCommand, TimeSpan.FromSeconds(1), OnClicked);
+        }
 
-            RateLimitClickCommand = new RateLimitCommandTakingFunction(ExecuteRateLimitClickCommand, TimeSpan.FromSeconds(1), 
-                (parameter, newParameter) => (int)parameter + (int)newParameter);
+        private object OnClicked(object currentParameter, object newParameter)
+        {
+            return (int) currentParameter + (int) newParameter;
+        }
+        
+        private void ExecuteClickCommand()
+        {
+            TimesClicked = ((DelayedCommand) ClickCommand).TimesClicked;
+        }
+
+        private void ExecuteDelayedClickCommand(object sender)
+        {
+            DelayedTimesClicked = (int)sender;
         }
 
         private void ExecuteRateLimitClickCommand(object sender)
         {
             RateLimitTimesClicked = (int)sender;
-        }
-
-        private void ExecuteDelayedClickCommand(object sender)
-        {
-            DelayedTimesClicked = (int) sender;
-        }
-
-        private void ExecuteClickCommand()
-        {
-            TimesClicked = ((DelayedCommand) ClickCommand).TimesClicked;
         }
 
         public int TimesClicked
