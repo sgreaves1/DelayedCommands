@@ -1,0 +1,29 @@
+﻿<Window x:Class="WpfApplication1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApplication1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+    
+    <StackPanel HorizontalAlignment="Center" Margin="0,0,40,0">
+        <Label Content="Delayed command with no delay" HorizontalAlignment="Center"/>
+        <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=ClickCommand}"/>
+        <Label Content="Button was clicked" HorizontalAlignment="Center"/>
+        <Label Content="{Binding Path=TimesClicked}" HorizontalAlignment="Center"/>
+        <Label Content="times" HorizontalAlignment="Center"></Label>
+    </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" Margin="40,0,0,0">
+            <Label Content="Delayed command with 200ms delay" HorizontalAlignment="Center"/>
+            <Button Width="100" Height="20" Content="Spam Click Me" Command="{Binding Path=DelayedClickCommand}"/>
+            <Label Content="Button was clicked" HorizontalAlignment="Center"/>
+            <Label Content="{Binding Path=DelayedTimesClicked}" HorizontalAlignment="Center"/>
+            <Label Content="times" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+
+    </StackPanel>
+</Window>
