@@ -10,7 +10,6 @@ namespace WpfApplication1.Command
         private readonly Action _methodToExecute;
         private readonly Func<bool> _canExecuteEvaluator;
         private readonly DispatcherTimer _dispatcherTimer;
-        private readonly TimeSpan _delayTime;
 
         public int TimesClicked;
 
@@ -31,7 +30,6 @@ namespace WpfApplication1.Command
         {
             _methodToExecute = methodToExecute;
             _canExecuteEvaluator = canExecuteEvaluator;
-            _delayTime = delayTime;
             
             _dispatcherTimer = new DispatcherTimer(delayTime, DispatcherPriority.Normal, Callback, Application.Current.Dispatcher);
         }
