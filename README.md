@@ -4,6 +4,7 @@ A set of commands with built in adjustable delays for buttons that stop spam cli
 
 
 The Problem:
+
 http://stackoverflow.com/questions/38480982/how-to-stop-users-from-spamming-buttons-in-wpf/38504618#38504618
 I needed a way to stop users spamming a buton, this was because the button skipped my media element forward by 5 minutes. If you spam this button it repeats the skip which is an expensive operation. Instead i wish to add up all the times the button is spam clicked and once spamming stops execute 1 big skip operation by the amount of times the button was spammed.
 
